@@ -1,0 +1,69 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile
+    image: asdf:${ASDF_VERSION:-latest}
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      ASDF_HOST: 0.0.0.0
+      ASDF_DB_HOST: asdf-db
+      ASDF_DB_PORT: 5432
+      ASDF_DB_USER: asdf
+      ASDF_DB_PASS: asdf
+      ASDF_DB_BASE: asdf
+  db:
+    image: postgres:13.6-bullseye
+    hostname: asdf-db
+    environment:
+      POSTGRES_PASSWORD: "asdf"
+      POSTGRES_USER: "asdf"
+      POSTGRES_DB: "asdf"
+    volumes:
+      - asdf-db-data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: pg_isready -U asdf
+      interval: 2s
+      timeout: 3s
+      retries: 40
+  migrator:
+    image: asdf:${ASDF_VERSION:-latest}
+    restart: "no"
+    command: alembic upgrade head
+    environment:
+      ASDF_DB_HOST: asdf-db
+      ASDF_DB_PORT: 5432
+      ASDF_DB_USER: asdf
+      ASDF_DB_PASS: asdf
+      ASDF_DB_BASE: asdf
+    depends_on:
+      db:
+        condition: service_healthy
+  redis:
+    image: bitnami/redis:6.2.5
+    hostname: asdf-redis
+    restart: always
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+    healthcheck:
+      test: redis-cli ping
+      interval: 1s
+      timeout: 3s
+      retries: 30
+
+
+
+volumes:
+  asdf-db-data:
+    name: asdf-db-data
+
