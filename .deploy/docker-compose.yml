@@ -4,7 +4,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: ./deploy/Dockerfile
+      dockerfile: ./Dockerfile
     image: asdf:${ASDF_VERSION:-latest}
     restart: always
     env_file:
@@ -14,6 +14,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    ports:
+      - "8000:8000"
     environment:
       ASDF_HOST: 0.0.0.0
       ASDF_DB_HOST: asdf-db
@@ -21,6 +23,8 @@ services:
       ASDF_DB_USER: asdf
       ASDF_DB_PASS: asdf
       ASDF_DB_BASE: asdf
+    volumes:
+      - ./:/app/src
   db:
     image: postgres:13.6-bullseye
     hostname: asdf-db
@@ -28,6 +32,8 @@ services:
       POSTGRES_PASSWORD: "asdf"
       POSTGRES_USER: "asdf"
       POSTGRES_DB: "asdf"
+    ports:
+      - "5432:5432"
     volumes:
       - asdf-db-data:/var/lib/postgresql/data
     restart: always

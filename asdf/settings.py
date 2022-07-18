@@ -6,6 +6,7 @@ from typing import Optional
 from pydantic import BaseSettings
 from yarl import URL
 
+
 TEMP_DIR = Path(gettempdir())
 
 class LogLevel(str, enum.Enum):  # noqa: WPS600
