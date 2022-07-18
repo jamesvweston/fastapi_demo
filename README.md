@@ -1,6 +1,8 @@
-# fastapi
+# fastapi demo
 
-This project was generated using fastapi_template. It serves as a proof of concept and a demo of what the Olea services architecture could use.
+- This project was generated using fastapi_template. It serves as a proof of concept and a demo of what the Olea services architecture could use.
+- It was created using this templating tool: https://github.com/s3rius/FastAPI-template
+- Openapi docs, graphql, sqlalchemy, redis, postgres, and even DB migrations are supported
 
 ## Poetry
 
