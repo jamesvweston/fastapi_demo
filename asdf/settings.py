@@ -6,8 +6,8 @@ from typing import Optional
 from pydantic import BaseSettings
 from yarl import URL
 
-
 TEMP_DIR = Path(gettempdir())
+
 
 class LogLevel(str, enum.Enum):  # noqa: WPS600
     """Possible log levels."""
@@ -55,7 +55,6 @@ class Settings(BaseSettings):
     redis_pass: Optional[str] = None
     redis_base: Optional[int] = None
 
-
     @property
     def db_url(self) -> URL:
         """
@@ -71,6 +70,7 @@ class Settings(BaseSettings):
             password=self.db_pass,
             path=f"/{self.db_base}",
         )
+
     @property
     def redis_url(self) -> URL:
         """

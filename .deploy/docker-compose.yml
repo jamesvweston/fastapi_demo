@@ -4,36 +4,41 @@ services:
   api:
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./.deploy/Dockerfile
     image: asdf:${ASDF_VERSION:-latest}
     restart: always
-    env_file:
-      - .env
     depends_on:
       db:
         condition: service_healthy
       redis:
         condition: service_healthy
     ports:
-      - "8000:8000"
+      - ${APP_PORT}:${APP_PORT}
     environment:
-      ASDF_HOST: 0.0.0.0
-      ASDF_DB_HOST: asdf-db
-      ASDF_DB_PORT: 5432
-      ASDF_DB_USER: asdf
-      ASDF_DB_PASS: asdf
-      ASDF_DB_BASE: asdf
+      APP_ENV: ${APP_ENV}
+      APP_HOST: ${APP_HOST}
+      APP_PORT: ${APP_PORT}
+      APP_RELOAD: ${APP_RELOAD}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_BASE: ${DB_BASE}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_USER: ${REDIS_USER}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
     volumes:
       - ./:/app/src
   db:
     image: postgres:13.6-bullseye
     hostname: asdf-db
     environment:
-      POSTGRES_PASSWORD: "asdf"
-      POSTGRES_USER: "asdf"
-      POSTGRES_DB: "asdf"
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_PASSWORD}
     ports:
-      - "5432:5432"
+      - ${DB_PORT}:${DB_PORT}
     volumes:
       - asdf-db-data:/var/lib/postgresql/data
     restart: always
@@ -43,15 +48,25 @@ services:
       timeout: 3s
       retries: 40
   migrator:
+    profiles:
+      - donotstart
     image: asdf:${ASDF_VERSION:-latest}
     restart: "no"
     command: alembic upgrade head
     environment:
-      ASDF_DB_HOST: asdf-db
-      ASDF_DB_PORT: 5432
-      ASDF_DB_USER: asdf
-      ASDF_DB_PASS: asdf
-      ASDF_DB_BASE: asdf
+      APP_ENV: ${APP_ENV}
+      APP_HOST: ${APP_HOST}
+      APP_PORT: ${APP_PORT}
+      APP_RELOAD: ${APP_RELOAD}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_BASE: ${DB_BASE}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_USER: ${REDIS_USER}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
     depends_on:
       db:
         condition: service_healthy
@@ -66,8 +81,6 @@ services:
       interval: 1s
       timeout: 3s
       retries: 30
-
-
 
 volumes:
   asdf-db-data:

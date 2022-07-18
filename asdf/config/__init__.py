@@ -1,14 +1,20 @@
-"""asdf models."""
-import pkgutil
+"""config settings."""
+from dataclasses import dataclass
 from pathlib import Path
+from tempfile import gettempdir
+
+from asdf.config.app import AppSettings
+from asdf.config.cache import CacheSettings
+from asdf.config.database import DatabaseSettings
+
+TEMP_DIR = Path(gettempdir())
 
 
-def load_all_models() -> None:
-    """Load all models from this folder."""
-    package_dir = Path(__file__).resolve().parent
-    modules = pkgutil.walk_packages(
-        path=[str(package_dir)],
-        prefix="asdf.db.models.",
-    )
-    for module in modules:
-        __import__(module.name)  # noqa: WPS421
+@dataclass(frozen=True)
+class Config:
+    app: AppSettings = AppSettings()
+    cache: CacheSettings = CacheSettings()
+    database: DatabaseSettings = DatabaseSettings()
+
+
+config = Config()

@@ -1,9 +1,9 @@
 import strawberry
+from strawberry.types import Info
 
 from asdf.db.dao.dummy_dao import DummyDAO
 from asdf.web.gql.context import Context
 
-from strawberry.types import Info
 
 @strawberry.type
 class Mutation:

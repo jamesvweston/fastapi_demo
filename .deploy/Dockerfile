@@ -6,13 +6,13 @@ RUN pip install poetry==1.1.14
 # Configuring poetry
 RUN poetry config virtualenvs.create false
 
-COPY pyproject.toml  poetry.lock /app/src/
+COPY ../pyproject.toml  poetry.lock /app/src/
 WORKDIR /app/src
 
 # Installing requirements
 RUN poetry install
 
-COPY . /app/src/
+COPY .. /app/src/
 RUN poetry install
 
 CMD ["/usr/local/bin/python", "-m", "asdf"]

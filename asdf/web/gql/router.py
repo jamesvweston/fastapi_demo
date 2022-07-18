@@ -1,10 +1,9 @@
 import strawberry
 from strawberry.fastapi import GraphQLRouter
 
+from asdf.web.gql import dummy, echo, redis
 from asdf.web.gql.context import get_context
-from asdf.web.gql import echo
-from asdf.web.gql import dummy
-from asdf.web.gql import redis
+
 
 @strawberry.type
 class Query(

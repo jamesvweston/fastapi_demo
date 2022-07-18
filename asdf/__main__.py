@@ -1,19 +1,17 @@
 import uvicorn
-import os
-import shutil
 
-from asdf.settings import settings
+from asdf.config import config
 
 
 def main() -> None:
     """Entrypoint of the application."""
     uvicorn.run(
         "asdf.web.application:get_app",
-        workers=settings.workers_count,
-        host=settings.host,
-        port=settings.port,
-        reload=settings.reload,
-        log_level=settings.log_level.value.lower(),
+        workers=config.app.workers_count,
+        host=config.app.host,
+        port=config.app.port,
+        reload=config.app.reload,
+        log_level=config.app.log_level.value.lower(),
         factory=True,
     )
 

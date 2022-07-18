@@ -1,16 +1,16 @@
-from typing import Awaitable, Callable
-import logging
-from fastapi import FastAPI
-
-from asdf.settings import settings
-from asdf.services.redis.lifetime import init_redis, shutdown_redis
 from asyncio import current_task
+from typing import Awaitable, Callable
+
+from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_scoped_session,
     create_async_engine,
 )
 from sqlalchemy.orm import sessionmaker
+
+from asdf.config import config
+from asdf.services.redis.lifetime import init_redis, shutdown_redis
 
 
 def _setup_db(app: FastAPI) -> None:
@@ -23,7 +23,9 @@ def _setup_db(app: FastAPI) -> None:
 
     :param app: fastAPI application.
     """
-    engine = create_async_engine(str(settings.db_url), echo=settings.db_echo)
+    engine = create_async_engine(
+        str(config.database.default.url), echo=config.database.default.echo
+    )
     session_factory = async_scoped_session(
         sessionmaker(
             engine,
@@ -67,7 +69,7 @@ def register_shutdown_event(app: FastAPI) -> Callable[[], Awaitable[None]]:
     @app.on_event("shutdown")
     async def _shutdown() -> None:  # noqa: WPS430
         await app.state.db_engine.dispose()
-        
+
         await shutdown_redis(app)
         pass  # noqa: WPS420
 

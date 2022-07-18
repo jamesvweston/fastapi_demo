@@ -1,11 +1,10 @@
 import uuid
-import fakeredis
-import pytest
 
+import pytest
+from fakeredis.aioredis import FakeRedis
 from fastapi import FastAPI
 from httpx import AsyncClient
 from starlette import status
-from fakeredis.aioredis import FakeRedis
 
 
 @pytest.mark.anyio
@@ -21,7 +20,7 @@ async def test_setting_value(
     :param fake_redis: fake redis instance.
     :param client: client fixture.
     """
-    url = fastapi_app.url_path_for('handle_http_post')
+    url = fastapi_app.url_path_for("handle_http_post")
 
     test_key = uuid.uuid4().hex
     test_val = uuid.uuid4().hex
@@ -62,7 +61,7 @@ async def test_getting_value(
     test_key = uuid.uuid4().hex
     test_val = uuid.uuid4().hex
     await fake_redis.set(test_key, test_val)
-    url = fastapi_app.url_path_for('handle_http_post')
+    url = fastapi_app.url_path_for("handle_http_post")
     response = await client.post(
         url,
         json={
@@ -76,4 +75,3 @@ async def test_getting_value(
     assert response.status_code == status.HTTP_200_OK
     assert response.json()["data"]["redis"]["key"] == test_key
     assert response.json()["data"]["redis"]["value"] == test_val
-

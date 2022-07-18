@@ -1,4 +1,5 @@
 from typing import List, Optional
+
 from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -35,10 +36,7 @@ class DummyDAO:
 
         return raw_dummies.scalars().fetchall()
 
-    async def filter(
-        self,
-        name: Optional[str] = None
-    ) -> List[DummyModel]:
+    async def filter(self, name: Optional[str] = None) -> List[DummyModel]:
         """
         Get specific dummy model.
 
